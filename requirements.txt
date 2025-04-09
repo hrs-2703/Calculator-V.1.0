@@ -1,4 +1,12 @@
-pytest
-pytest-cov
-flake8
-black
+# Testing and coverage
+pytest==8.1.1
+pytest-cov==4.1.0
+
+# Code coverage upload (only needed locally, optional)
+codecov==2.1.13
+
+# Linting & formatting
+flake8==7.0.0
+black==24.3.0
+flake8-bugbear==24.2.6
+flake8-docstrings==1.7.0
