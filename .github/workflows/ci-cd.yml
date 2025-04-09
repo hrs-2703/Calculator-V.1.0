@@ -26,7 +26,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run lint (flake8)
-      run: flake8 . --count --show-source --statistics
+      run: flake8 . 
 
     - name: Check code formatting (black)
       run: black . 
