@@ -5,7 +5,7 @@ import calculator
 
 
 def test_add():
-    """Test addition of two numbers."""
+    """Test adition of two numbers."""
     assert calculator.add(2, 3) == 5
 
 
