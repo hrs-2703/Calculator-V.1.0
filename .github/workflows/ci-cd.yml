@@ -1,53 +1,84 @@
-name: Python  Calculator CI/CD
+name: Python CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+    branches: [main, develop]
+  workflow_dispatch:  # Manual trigger for prod deploy
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
-    - name: Run lint (flake8)
-      run: flake8 . --count --show-source --statistics
-
-
-    - name: Check code formatting (black)
-      run: black . 
-
-   # - name: Run tests with coverage
-     # run: |
-       # pytest --cov=calculator --cov-report=xml
-
-   # - name: Upload coverage reports to Codecov
-    #  uses: codecov/codecov-action@v5
-     # with:
-      #  token: ${{ secrets.CODECOV_TOKEN }}
-       # slug: hrs-2703/Calculator-V.1.0
-
-  deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Deploy app
+      - name: Install dependencies
         run: |
-          echo " deployed app to a server/cloud platform"
-          
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run flake8 linting
+        run: flake8 . --count --show-source --statistics
+
+      - name: Run black formatting check
+        run: black . 
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=calculator --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          fail_ci_if_error: true
+
+  deploy-dev:
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to DEV
+        run: |
+          echo "Deploying to DEV..."
+          curl -X POST ${{ secrets.DEV_DEPLOY_HOOK }}
+
+  deploy-stage:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to STAGE
+        run: |
+          echo "Deploying to STAGE..."
+          curl -X POST ${{ secrets.STAGE_DEPLOY_HOOK }}
+
+  deploy-prod:
+    needs: build
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to PROD
+        run: |
+          echo "Deploying to PROD..."
+          curl -X POST ${{ secrets.PROD_DEPLOY_HOOK }}
