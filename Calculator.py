@@ -19,7 +19,7 @@ def multiply(a, b):
 
 
 def divide(a, b):
-    """Return the division of two numbers. Raise error on division by zero."""
+    """Return the division of two numbers.Error on div by zero."""
     if b == 0:
         raise ValueError("Cannot divide by zero.")
     return a / b
@@ -31,21 +31,21 @@ def power(a, b):
 
 
 def sqrt(a):
-    """Return the square root of a number. Raise error for negative input."""
+    """Return the square root of a number. Error for neg input."""
     if a < 0:
         raise ValueError("Cannot compute square root of a negative number.")
     return math.sqrt(a)
 
 
 def factorial(n):
-    """Return the factorial of a non-negative integer."""
+    """Return the factorial of a non-neg integer."""
     if not isinstance(n, int) or n < 0:
-        raise ValueError("Factorial is only defined for non-negative integers.")
+        raise ValueError("Factorial is only defined for non-neg integers.")
     return math.factorial(n)
 
 
 def log(a, base=10):
-    """Return the logarithm of a number with a specified base. Raise error for non-positive input."""
+    """Return the log of a number with base.Error for non-pos input."""
     if a <= 0:
         raise ValueError("Logarithm is only defined for positive numbers.")
     return math.log(a, base)
