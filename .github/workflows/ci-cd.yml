@@ -44,7 +44,8 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=calculator --cov-report=xml
+          pytest --cov=calculator.py --cov-report=xml --import-mode=importlib
+
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
