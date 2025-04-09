@@ -1,7 +1,7 @@
 """Unit tests for the calculator module."""
 
 import pytest
-from calculator import calculator
+import calculator
 
 
 def test_add():
