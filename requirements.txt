@@ -1,6 +1,6 @@
 # Testing and coverage
 pytest==8.1.1
-pytest-cov==4.1.0
+
 
 # Code coverage upload (only needed locally, optional)
 codecov==2.1.13
