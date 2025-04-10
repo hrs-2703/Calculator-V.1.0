@@ -1,4 +1,4 @@
-"""Calculator module providing various mathematical operations."""
+"""Calculatr module providing various mathematical operations."""
 
 import math
 
